@@ -26,8 +26,26 @@ function createDom(vNode) {
     }
   }
   //TODO :处理属性值
+  setPropsForDom(dom, props);
   return dom;
 }
+function setPropsForDom(dom, VNodeProps = {}) {
+  if (!dom) return;
+  for (let key in VNodeProps) {
+    if (key === "children") continue;
+
+    if (/^on[A-Z].*/.test(key)) {
+      //TODO:处理事件
+    } else if (key === "style") {
+      Object.keys(VNodeProps[key]).forEach((styleName) => {
+        dom.style[styleName] = VNodeProps[key][styleName];
+      });
+    } else {
+      dom[key] = VNodeProps[key];
+    }
+  }
+}
+
 function mountArray(children, parent) {
   if (!Array.isArray(children)) return;
   for (let i = 0; i < children.length; i++) {
