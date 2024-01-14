@@ -1,6 +1,9 @@
-// import React from "react";
+import React from "react";
+/* react18的写法
 import ReactDOM from "react-dom/client";
-import App from "./App";
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+let element = <div>Hello My App</div>;
+root.render(element); */
+import ReactDOM from "react-dom";
+ReactDOM.render(<div>Hello My App</div>, document.getElementById("root"));
+console.log(<div>Hello My App</div>);
