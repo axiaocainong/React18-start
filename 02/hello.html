@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+  </head>
+  <body>
+    <div id="content" onclick="changeText()">Click me : count:0</div>
+  </body>
+  <style>
+    .content {
+      margin: 0 auto;
+      background-color: red;
+    }
+  </style>
+  <script lang="javascript">
+    let count =0
+    function changeText(){
+        count++
+        console.log(document.getElementById('content').innerText);
+
+        document.getElementById('content').innerText='Click me : count:'+ count
+    }
+  </script>
+</html>
+
+<!-- 
+    getElementById 是一个方法，用于通过元素的 ID 获取对应的 DOM 元素。每个元素的 ID
+    都是唯一的，所以该方法返回的总是一个单一的 DOM 对象。如果没有找到匹配的元素，它将返回 null。
+    
+    getElementsByClassName
+是一个方法，用于获取具有特定类名的所有元素。这意味着，如果有许多元素有相同的类名，这个方法会返回一个包含所有这些元素的
+NodeList。
+ -->
