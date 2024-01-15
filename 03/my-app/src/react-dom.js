@@ -1,32 +1,32 @@
 import { REACT_ELEMENT } from "./utils";
 
-function render(vNode, containerDom) {
+function render(VNode, containerDom) {
   //将虚拟dom转换为真实dom
   //将转换的真实dom作为子元素挂载到containerDom中
-  mount(vNode, containerDom);
+  mount(VNode, containerDom);
 }
-function mount(vNode, containerDom) {
-  let newDom = createDom(vNode);
+function mount(VNode, containerDom) {
+  let newDom = createDom(VNode);
   newDom && containerDom.appendChild(newDom);
 }
 
-function createDom(vNode) {
+function createDom(VNode) {
   //1.创建元素 2.处理子元素 3.处理属性值
-  const { type, props } = vNode;
+  const { type, props } = VNode;
   let dom;
   //处理类组件
   if (
     typeof type === "function" &&
-    vNode.$$typeof === REACT_ELEMENT &&
+    VNode.$$typeof === REACT_ELEMENT &&
     // IS_CLASS_COMPONENT 来自Component的静态属性
     type.IS_CLASS_COMPONENT === true
   ) {
-    return getDomByClassComponent(vNode);
+    return getDomByClassComponent(VNode);
   }
-  if (typeof type === "function" && vNode.$$typeof === REACT_ELEMENT) {
+  if (typeof type === "function" && VNode.$$typeof === REACT_ELEMENT) {
     //处理类型为函数组件
-    return getDomByFunctionComponent(vNode);
-  } else if (type && vNode.$$typeof === REACT_ELEMENT) {
+    return getDomByFunctionComponent(VNode);
+  } else if (type && VNode.$$typeof === REACT_ELEMENT) {
     dom = document.createElement(type);
   }
   if (props) {
@@ -40,19 +40,27 @@ function createDom(vNode) {
   }
   //TODO :处理属性值
   setPropsForDom(dom, props);
+  VNode.dom = dom;
   return dom;
 }
 
-function getDomByClassComponent(vNode) {
-  let { type, props } = vNode;
+function getDomByClassComponent(VNode) {
+  let { type, props } = VNode;
   let instance = new type(props);
   let renderVNode = instance.render();
+  //保存虚拟dom
+  instance.oldVNode = renderVNode;
+  //TOOD:需要删除的代码
+  setTimeout(() => {
+    instance.setState({ xxx: "你爹来了！！！" });
+  }, 3000);
+  //TOOD:需要删除的代码
   if (!renderVNode) return null;
   return createDom(renderVNode);
 }
 
-function getDomByFunctionComponent(vNode) {
-  const { type, props } = vNode;
+function getDomByFunctionComponent(VNode) {
+  const { type, props } = VNode;
   let renderVNod = type(props);
   if (!renderVNod) return null;
   return createDom(renderVNod);
@@ -85,7 +93,15 @@ function mountArray(children, parent) {
     }
   }
 }
-
+export function findDomByVNode(VNode) {
+  if (!VNode) return;
+  if (VNode.dom) return VNode.dom;
+}
+export function updateDomTree(oldDom, newVNode) {
+  let parentNode = oldDom.parentNode;
+  parentNode.removeChild(oldDom);
+  parentNode.appendChild(createDom(newVNode));
+}
 const ReactDOM = {
   render,
 };
