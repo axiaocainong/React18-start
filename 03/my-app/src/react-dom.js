@@ -9,13 +9,22 @@ function mount(vNode, containerDom) {
   let newDom = createDom(vNode);
   newDom && containerDom.appendChild(newDom);
 }
+
 function createDom(vNode) {
   //1.创建元素 2.处理子元素 3.处理属性值
   const { type, props } = vNode;
   let dom;
-
-  //处理类型为函数组件
+  //处理类组件
+  if (
+    typeof type === "function" &&
+    vNode.$$typeof === REACT_ELEMENT &&
+    // IS_CLASS_COMPONENT 来自Component的静态属性
+    type.IS_CLASS_COMPONENT === true
+  ) {
+    return getDomByClassComponent(vNode);
+  }
   if (typeof type === "function" && vNode.$$typeof === REACT_ELEMENT) {
+    //处理类型为函数组件
     return getDomByFunctionComponent(vNode);
   } else if (type && vNode.$$typeof === REACT_ELEMENT) {
     dom = document.createElement(type);
@@ -33,12 +42,22 @@ function createDom(vNode) {
   setPropsForDom(dom, props);
   return dom;
 }
+
+function getDomByClassComponent(vNode) {
+  let { type, props } = vNode;
+  let instance = new type(props);
+  let renderVNode = instance.render();
+  if (!renderVNode) return null;
+  return createDom(renderVNode);
+}
+
 function getDomByFunctionComponent(vNode) {
   const { type, props } = vNode;
   let renderVNod = type(props);
   if (!renderVNod) return null;
   return createDom(renderVNod);
 }
+
 function setPropsForDom(dom, VNodeProps = {}) {
   if (!dom) return;
   for (let key in VNodeProps) {

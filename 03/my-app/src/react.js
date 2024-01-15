@@ -1,5 +1,5 @@
 import { REACT_ELEMENT } from "./utils";
-
+import { Component } from "./Component";
 function createElement(type, properties = {}, children) {
   // 观察一下react原版代码的createElement函数的返回值会发现有多余的__sorce,__self,而且单独返回ref和key属性
   let ref = properties.ref || null; // 后面会讲到，这里只需要知道是跟操作DOM相关
@@ -31,5 +31,6 @@ function createElement(type, properties = {}, children) {
 }
 const React = {
   createElement,
+  Component,
 };
 export default React;
