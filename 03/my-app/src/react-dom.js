@@ -13,7 +13,11 @@ function createDom(vNode) {
   //1.创建元素 2.处理子元素 3.处理属性值
   const { type, props } = vNode;
   let dom;
-  if (type && vNode.$$typeof === REACT_ELEMENT) {
+
+  //处理类型为函数组件
+  if (typeof type === "function" && vNode.$$typeof === REACT_ELEMENT) {
+    return getDomByFunctionComponent(vNode);
+  } else if (type && vNode.$$typeof === REACT_ELEMENT) {
     dom = document.createElement(type);
   }
   if (props) {
@@ -28,6 +32,12 @@ function createDom(vNode) {
   //TODO :处理属性值
   setPropsForDom(dom, props);
   return dom;
+}
+function getDomByFunctionComponent(vNode) {
+  const { type, props } = vNode;
+  let renderVNod = type(props);
+  if (!renderVNod) return null;
+  return createDom(renderVNod);
 }
 function setPropsForDom(dom, VNodeProps = {}) {
   if (!dom) return;
