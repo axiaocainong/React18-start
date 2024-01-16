@@ -1,3 +1,4 @@
+import { addEvent } from "./event";
 import { REACT_ELEMENT } from "./utils";
 
 function render(VNode, containerDom) {
@@ -50,11 +51,7 @@ function getDomByClassComponent(VNode) {
   let renderVNode = instance.render();
   //保存虚拟dom
   instance.oldVNode = renderVNode;
-  //TOOD:需要删除的代码
-  setTimeout(() => {
-    instance.setState({ xxx: "你爹来了！！！" });
-  }, 3000);
-  //TOOD:需要删除的代码
+
   if (!renderVNode) return null;
   return createDom(renderVNode);
 }
@@ -70,9 +67,10 @@ function setPropsForDom(dom, VNodeProps = {}) {
   if (!dom) return;
   for (let key in VNodeProps) {
     if (key === "children") continue;
-
+    // 找以'on'开头，后接一个大写字母，然后是任意数量的任意字符（包括0个）。如onClick
     if (/^on[A-Z].*/.test(key)) {
-      //TODO:处理事件
+      //处理事件
+      addEvent(dom, key.toLocaleLowerCase(), VNodeProps[key]);
     } else if (key === "style") {
       Object.keys(VNodeProps[key]).forEach((styleName) => {
         dom.style[styleName] = VNodeProps[key][styleName];
