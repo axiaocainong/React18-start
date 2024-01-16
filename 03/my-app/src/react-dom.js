@@ -13,7 +13,7 @@ function mount(VNode, containerDom) {
 
 function createDom(VNode) {
   //1.创建元素 2.处理子元素 3.处理属性值
-  const { type, props } = VNode;
+  const { type, props, ref } = VNode;
   let dom;
   //处理类组件
   if (
@@ -42,15 +42,18 @@ function createDom(VNode) {
   //TODO :处理属性值
   setPropsForDom(dom, props);
   VNode.dom = dom;
+  //给原生标签赋值的处理
+  ref && (ref.current = dom);
   return dom;
 }
 
 function getDomByClassComponent(VNode) {
-  let { type, props } = VNode;
+  let { type, props, ref } = VNode;
   let instance = new type(props);
   let renderVNode = instance.render();
   //保存虚拟dom
   instance.oldVNode = renderVNode;
+  ref && (ref.current = instance);
 
   if (!renderVNode) return null;
   return createDom(renderVNode);
