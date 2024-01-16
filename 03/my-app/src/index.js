@@ -2,48 +2,57 @@
 import React from "./react";
 import ReactDOM from "./react-dom";
 
-class CustomTextInput extends React.Component {
+class MyClassComponent extends React.Component {
+  counter = 0;
   constructor(props) {
     super(props);
-    // create a ref to store the textInput DOM element
-    this.textInput = React.createRef();
-    this.focusTextInput = this.focusTextInput.bind(this);
+    this.state = { count: "0" };
   }
-
-  focusTextInput() {
-    // Explicitly focus the text input using the raw DOM API
-    // Note: we're accessing "current" to get the DOM node
-    this.textInput.current.focus();
+  updateShowText(newText) {
+    this.setState({
+      count: newText,
+    });
   }
-
   render() {
-    // tell React that we want to associate the <input> ref
-    // with the `textInput` that we created in the constructor
     return (
-      <div>
-        <input type="text" ref={this.textInput} />
-        <input
-          type="button"
-          value="Focus the text input"
-          onClick={this.focusTextInput}
-        />
+      <div
+        className="test-class"
+        style={{
+          color: "red",
+          cursor: "pointer",
+          border: "1px solid gray",
+          borderRadius: "6px",
+          display: "inline-block",
+          padding: "6px 12px",
+        }}
+        onClick={() => this.updateShowText("" + ++this.counter)}
+      >
+        Simple React Counter: {this.state.count}
       </div>
     );
   }
 }
-
-class AutoFocusTextInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.textInput = React.createRef();
-  }
-
-  componentDidMount() {
-    this.textInput.current.focusTextInput();
-  }
-
-  render() {
-    return <CustomTextInput ref={this.textInput} />;
-  }
+let ForwardRefFunctionComponent = React.forwardRef((props, ref) => {
+  return <input ref={ref}>ForwardRefFunctionComponent </input>;
+});
+function FunctionComponent(props) {
+  let forwardRef = React.createRef();
+  let classRef = React.createRef();
+  let elementRef = React.createRef();
+  const changeInput = () => {
+    forwardRef.current.value = "forwarRef";
+    classRef.current.updateShowText("1000000");
+    elementRef.current.value = "..............";
+  };
+  return (
+    <div>
+      <ForwardRefFunctionComponent ref={forwardRef} /> <br />
+      <input ref={elementRef} />
+      <br />
+      <input type="button" onClick={changeInput} value={"点击加省略号"} />
+      <MyClassComponent ref={classRef} />
+    </div>
+  );
 }
-ReactDOM.render(<AutoFocusTextInput />, document.getElementById("root"));
+
+ReactDOM.render(<FunctionComponent />, document.getElementById("root"));

@@ -1,5 +1,5 @@
 import { addEvent } from "./event";
-import { REACT_ELEMENT } from "./utils";
+import { REACT_ELEMENT, REACT_FORWARD_REF } from "./utils";
 
 function render(VNode, containerDom) {
   //将虚拟dom转换为真实dom
@@ -15,13 +15,17 @@ function createDom(VNode) {
   //1.创建元素 2.处理子元素 3.处理属性值
   const { type, props, ref } = VNode;
   let dom;
-  //处理类组件
+  //处理forward转发的函数组件
+  if (type && type.$$typeof === REACT_FORWARD_REF) {
+    return getDomByForwardRefFunction(VNode);
+  }
   if (
     typeof type === "function" &&
     VNode.$$typeof === REACT_ELEMENT &&
     // IS_CLASS_COMPONENT 来自Component的静态属性
     type.IS_CLASS_COMPONENT === true
   ) {
+    //处理类组件
     return getDomByClassComponent(VNode);
   }
   if (typeof type === "function" && VNode.$$typeof === REACT_ELEMENT) {
@@ -45,6 +49,12 @@ function createDom(VNode) {
   //给原生标签赋值的处理
   ref && (ref.current = dom);
   return dom;
+}
+function getDomByForwardRefFunction(VNode) {
+  let { type, ref, props } = VNode;
+  let renderVNode = type.render(props, ref);
+  if (!renderVNode) return;
+  return createDom(renderVNode);
 }
 
 function getDomByClassComponent(VNode) {

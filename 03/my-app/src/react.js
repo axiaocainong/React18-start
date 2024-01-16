@@ -1,4 +1,4 @@
-import { REACT_ELEMENT } from "./utils";
+import { REACT_ELEMENT, REACT_FORWARD_REF } from "./utils";
 import { Component } from "./Component";
 function createElement(type, properties = {}, children) {
   // 观察一下react原版代码的createElement函数的返回值会发现有多余的__sorce,__self,而且单独返回ref和key属性
@@ -34,9 +34,16 @@ function createRef() {
     current: null,
   };
 }
+function forwardRef(render) {
+  return {
+    $$typeof: REACT_FORWARD_REF,
+    render,
+  };
+}
 const React = {
   createElement,
   Component,
   createRef,
+  forwardRef,
 };
 export default React;
