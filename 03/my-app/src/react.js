@@ -1,4 +1,4 @@
-import { REACT_ELEMENT, REACT_FORWARD_REF } from "./utils";
+import { REACT_ELEMENT, REACT_FORWARD_REF, toVNode } from "./utils";
 import { Component } from "./Component";
 function createElement(type, properties = {}, children) {
   // 观察一下react原版代码的createElement函数的返回值会发现有多余的__sorce,__self,而且单独返回ref和key属性
@@ -15,10 +15,10 @@ function createElement(type, properties = {}, children) {
 
   if (arguments.length > 3) {
     // 多个子元素, 转化成数组
-    props.children = Array.prototype.slice.call(arguments, 2);
+    props.children = Array.prototype.slice.call(arguments, 2).map(toVNode);
   } else {
     // 单个子元素，转化为数组
-    props.children = children;
+    props.children = toVNode(children);
   }
 
   return {
